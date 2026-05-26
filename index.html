@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLOW CORE</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            background-color: #050505; color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0; padding: 20px;
+        }
+        h2 { text-align: center; font-weight: 800; letter-spacing: 2px; font-size: 20px; border-bottom: 1px solid #222; padding-bottom: 15px; margin-bottom: 25px; }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; font-size: 11px; color: #888; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; letter-spacing: 1px;}
+        input, select {
+            width: 100%; box-sizing: border-box; background: #111; border: 1px solid #333;
+            color: #fff; padding: 14px; border-radius: 8px; font-size: 14px; outline: none; transition: 0.3s;
+        }
+        input:focus, select:focus { border-color: #fff; }
+        .row { display: flex; gap: 15px; }
+        .row .input-group { flex: 1; }
+        .btn {
+            width: 100%; background: #ffffff; color: #000000; border: none; padding: 18px;
+            font-size: 14px; font-weight: 800; text-transform: uppercase; border-radius: 8px;
+            cursor: pointer; letter-spacing: 1px; margin-top: 10px; transition: 0.2s;
+        }
+        .btn:active { transform: scale(0.98); background: #e0e0e0; }
+    </style>
+</head>
+<body>
+
+    <h2>FLOW PRODUCTION CORE</h2>
+
+    <div class="input-group">
+        <label>Ключевые запросы (через запятую)</label>
+        <input type="text" id="queries" value="бизнес, инвестиции, товарка, подкаст, психология">
+    </div>
+
+    <div class="row">
+        <div class="input-group">
+            <label>Мин. подписчиков</label>
+            <input type="number" id="min_subs" value="1000">
+        </div>
+        <div class="input-group">
+            <label>Макс. подписчиков</label>
+            <input type="number" id="max_subs" value="40000">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="input-group">
+            <label>Цель (Лидов)</label>
+            <input type="number" id="target" value="10">
+        </div>
+        <div class="input-group">
+            <label>Глубина поиска</label>
+            <select id="mode">
+                <option value="50">Базовый (50 видео)</option>
+                <option value="300">Глубокий (300 видео)</option>
+            </select>
+        </div>
+    </div>
+
+    <button class="btn" onclick="sendData()">ЗАПУСТИТЬ СИСТЕМУ</button>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand(); 
+
+        function sendData() {
+            let data = {
+                queries: document.getElementById('queries').value,
+                min_subs: document.getElementById('min_subs').value,
+                max_subs: document.getElementById('max_subs').value,
+                target: document.getElementById('target').value,
+                mode: document.getElementById('mode').value
+            };
+            tg.sendData(JSON.stringify(data));
+        }
+    </script>
+</body>
+</html>
