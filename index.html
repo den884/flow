@@ -1,83 +1,191 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FLOW CORE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --color-bg: #050505;
+            --color-surface: #0e0e0e;
+            --color-border: #242424;
+            --color-primary: #ffffff;
+            --color-text-main: #f5f5f5;
+            --color-text-muted: #7a7a7a;
+        }
+
         body {
-            background-color: #050505; color: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0; padding: 20px;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text-main);
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            user-select: none;
         }
-        h2 { text-align: center; font-weight: 800; letter-spacing: 2px; font-size: 20px; border-bottom: 1px solid #222; padding-bottom: 15px; margin-bottom: 25px; }
-        .input-group { margin-bottom: 20px; }
-        label { display: block; font-size: 11px; color: #888; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; letter-spacing: 1px;}
-        input, select {
-            width: 100%; box-sizing: border-box; background: #111; border: 1px solid #333;
-            color: #fff; padding: 14px; border-radius: 8px; font-size: 14px; outline: none; transition: 0.3s;
+
+        .premium-glass {
+            background: rgba(14, 14, 14, 0.75);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
         }
-        input:focus, select:focus { border-color: #fff; }
-        .row { display: flex; gap: 15px; }
-        .row .input-group { flex: 1; }
-        .btn {
-            width: 100%; background: #ffffff; color: #000000; border: none; padding: 18px;
-            font-size: 14px; font-weight: 800; text-transform: uppercase; border-radius: 8px;
-            cursor: pointer; letter-spacing: 1px; margin-top: 10px; transition: 0.2s;
+
+        .premium-input {
+            background: #000000;
+            border: 1px solid var(--color-border);
+            color: var(--color-text-main);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .btn:active { transform: scale(0.98); background: #e0e0e0; }
+        
+        .premium-input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.08);
+            outline: none;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 14px;
+            width: 14px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            cursor: pointer;
+            margin-top: -5px;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: var(--color-border);
+            border-radius: 2px;
+        }
+
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: var(--color-primary);
+        }
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: var(--color-primary);
+        }
+
+        .btn-core {
+            background: var(--color-primary);
+            color: #000000;
+            transition: all 0.2s ease;
+        }
+        .btn-core:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
     </style>
 </head>
-<body>
+<body class="p-4 pb-28 flex flex-col items-center min-h-screen">
 
-    <h2>FLOW PRODUCTION CORE</h2>
+    <div class="w-full max-w-md space-y-5">
+        
+        <header class="flex items-center justify-between pt-2 pb-4 border-b border-[#1f1f1f]">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tighter">FLOW <span class="font-light text-gray-500">CORE</span></h1>
+                <p class="text-[9px] text-gray-500 uppercase tracking-widest mt-0.5">Enterprise Acquisition Terminal</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-[10px] text-gray-400 font-mono bg-[#111] px-2 py-0.5 rounded border border-[#222]">v3.5 PRO</span>
+                <div class="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></div>
+            </div>
+        </header>
 
-    <div class="input-group">
-        <label>Ключевые запросы (через запятую)</label>
-        <input type="text" id="queries" value="бизнес, инвестиции, товарка, подкаст, психология">
+        <div class="premium-glass p-5">
+            <label class="flex items-center justify-between mb-3">
+                <span class="text-[11px] font-medium uppercase tracking-widest text-gray-400">Поисковые Ключевые Векторы</span>
+            </label>
+            <textarea id="queries" class="premium-input w-full p-3 rounded-xl text-sm h-20 resize-none" placeholder="бизнес подкасты, арбитраж трафика, эксперт инвестиции..."></textarea>
+            <p class="text-[10px] text-gray-600 mt-2">Перечисляйте запросы строго через запятую для корректного разделения потоков.</p>
+        </div>
+
+        <div class="premium-glass p-5 space-y-5">
+            <div>
+                <div class="flex justify-between mb-2">
+                    <span class="text-[11px] font-medium uppercase tracking-widest text-gray-400">Лимит Уникальных Лидов</span>
+                    <span id="target-val" class="text-xs font-mono font-bold text-white">250</span>
+                </div>
+                <input type="range" id="target" min="25" max="1000" step="25" value="250" oninput="document.getElementById('target-val').innerText = this.value">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-1.5">Сабы (Минимум)</label>
+                    <input type="number" id="min_subs" class="premium-input w-full p-3 rounded-xl text-sm" value="5000">
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-1.5">Сабы (Максимум)</label>
+                    <input type="number" id="max_subs" class="premium-input w-full p-3 rounded-xl text-sm" value="500000">
+                </div>
+            </div>
+        </div>
+
+        <div class="premium-glass p-5">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-white">Режим Deep Scan</p>
+                    <p class="text-[10px] text-gray-500 mt-0.5">Внутренний парсинг скрытых контактов со страниц каналов</p>
+                </div>
+                <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                    <input type="checkbox" id="deep_scan" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-black border-2 border-[#333] appearance-none cursor-pointer z-10" checked/>
+                    <label for="deep_scan" class="toggle-label block overflow-hidden h-5 rounded-full bg-[#1c1c1e] cursor-pointer transition-colors duration-200"></label>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <div class="row">
-        <div class="input-group">
-            <label>Мин. подписчиков</label>
-            <input type="number" id="min_subs" value="1000">
-        </div>
-        <div class="input-group">
-            <label>Макс. подписчиков</label>
-            <input type="number" id="max_subs" value="40000">
-        </div>
+    <div class="fixed bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black via-black to-transparent flex justify-center z-50">
+        <button onclick="executePipeline()" class="btn-core w-full max-w-md py-4 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(255,255,255,0.05)]">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            Инициировать сбор данных
+        </button>
     </div>
-
-    <div class="row">
-        <div class="input-group">
-            <label>Цель (Лидов)</label>
-            <input type="number" id="target" value="10">
-        </div>
-        <div class="input-group">
-            <label>Глубина поиска</label>
-            <select id="mode">
-                <option value="50">Базовый (50 видео)</option>
-                <option value="300">Глубокий (300 видео)</option>
-            </select>
-        </div>
-    </div>
-
-    <button class="btn" onclick="sendData()">ЗАПУСТИТЬ СИСТЕМУ</button>
 
     <script>
         let tg = window.Telegram.WebApp;
-        tg.expand(); 
+        tg.expand();
+        tg.ready();
 
-        function sendData() {
-            let data = {
-                queries: document.getElementById('queries').value,
-                min_subs: document.getElementById('min_subs').value,
-                max_subs: document.getElementById('max_subs').value,
-                target: document.getElementById('target').value,
-                mode: document.getElementById('mode').value
+        // Цветовая синхронизация с интерфейсом Telegram
+        tg.setHeaderColor('#050505');
+        tg.setBackgroundColor('#050505');
+
+        function executePipeline() {
+            const queriesInput = document.getElementById('queries').value.trim();
+            if (!queriesInput) {
+                tg.showAlert("Ошибка: Поле ключевых векторов не может быть пустым.");
+                return;
+            }
+
+            // Сборка пакета конфигурации
+            const configPayload = {
+                queries: queriesInput,
+                target: parseInt(document.getElementById('target').value),
+                min_subs: parseInt(document.getElementById('min_subs').value),
+                max_subs: parseInt(document.getElementById('max_subs').value),
+                deep_scan: document.getElementById('deep_scan').checked,
+                threads: 5  // Оптимальный баланс производительности
             };
-            tg.sendData(JSON.stringify(data));
+
+            // Тактильный отклик смартфона перед отправкой
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
+
+            document.querySelector('.btn-core').innerHTML = "ПАКЕТ ДАННЫХ ИНЖЕКТИРОВАН...";
+            
+            setTimeout(() => {
+                tg.sendData(JSON.stringify(configPayload));
+            }, 250);
         }
     </script>
 </body>
