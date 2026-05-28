@@ -1,185 +1,62 @@
-  <!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FLOW CRM - Поиск лидов</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        body {
-            background-color: #000000;
-            color: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            padding: 20px;
-            margin: 0;
-        }
-        .container {
-            max-width: 100%;
-            background: #111111;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-        h2 {
-            margin-top: 0;
-            font-size: 18px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #aaaaaa;
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
-        }
-        .input-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            font-size: 12px;
-            color: #888;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-        input[type="text"], input[type="number"], select {
-            width: 100%;
-            padding: 12px;
-            background: #1a1a1a;
-            color: #ffffff;
-            border: 1px solid #333;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 14px;
-        }
-        input:focus, select:focus {
-            outline: none;
-            border-color: #555;
-        }
-        .flex-row {
-            display: flex;
-            gap: 10px;
-        }
-        .flex-row input {
-            width: 50%;
-        }
-        .toggle-group {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
-            padding: 10px 0;
-            border-top: 1px solid #222;
-        }
-        .toggle-group label {
-            margin-bottom: 0;
-            font-size: 14px;
-            color: #fff;
-            text-transform: none;
-        }
-        .toggle-group input[type="checkbox"] {
-            transform: scale(1.5);
-            accent-color: #ffffff;
-        }
-        button {
-            width: 100%;
-            padding: 15px;
-            background: #ffffff;
-            color: #000000;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 20px;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-        button:active {
-            background: #cccccc;
-        }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h2>Поисковые ключевые векторы</h2>
-    
-    <div class="input-group">
-        <input type="text" id="query" placeholder="бизнес подкасты, арбитраж трафика..." value="бизнес подкасты">
-    </div>
-
-    <div class="input-group">
-        <label>Лимит уникальных лидов</label>
-        <input type="number" id="limit" value="250">
-    </div>
-
-    <div class="input-group">
-        <label>Сабы (Минимум - Максимум)</label>
-        <div class="flex-row">
-            <input type="number" id="subs_min" placeholder="5000" value="5000">
-            <input type="number" id="subs_max" placeholder="500000" value="500000">
-        </div>
-    </div>
-
-    <div class="input-group">
-        <label>Период публикации</label>
-        <select id="time_period">
-            <option value="1_week">За последнюю неделю</option>
-            <option value="1_month">За последний месяц</option>
-            <option value="2_months">За 2 месяца</option>
-            <option value="3_months">За 3 месяца</option>
-            <option value="6_months">За полгода</option>
-            <option value="1_year">За год</option>
-            <option value="all_time" selected>За всё время</option>
-        </select>
-    </div>
-
-    <div class="input-group">
-        <label>Просмотры (Мин - Макс)</label>
-        <div class="flex-row">
-            <input type="number" id="views_min" placeholder="От 1000">
-            <input type="number" id="views_max" placeholder="До 60000">
-        </div>
-    </div>
-
-    <div class="input-group">
-        <label>Формат контента</label>
-        <select id="content_format">
-            <option value="all">Любой формат</option>
-            <option value="long">Только длинные видео</option>
-            <option value="shorts">Только Shorts</option>
-        </select>
-    </div>
-
-    <div class="toggle-group">
-        <label>Режим Deep Scan<br><span style="font-size: 11px; color: #888;">Внутренний парсинг скрытых контактов</span></label>
-        <input type="checkbox" id="deep_scan">
-    </div>
-
-    <div class="toggle-group">
-        <label>Только с контактами<br><span style="font-size: 11px; color: #888;">Telegram / Email</span></label>
-        <input type="checkbox" id="require_contacts" checked>
-    </div>
-
-    <button onclick="sendData()">Инициировать сбор данных</button>
-</div>
-
 <script>
     let tg = window.Telegram.WebApp;
-    tg.expand();
+    tg.expand(); // Открываем на весь экран
 
     function sendData() {
-        let data = {
-            query: document.getElementById("query").value,
-            limit: document.getElementById("limit").value,
-            subs_min: document.getElementById("subs_min").value,
-            subs_max: document.getElementById("subs_max").value,
+        // 1. Собираем данные и переименовываем ключи строго под твой models.py
+        let requestData = {
+            vector: document.getElementById("query").value,
+            limit: parseInt(document.getElementById("limit").value) || 250,
+            subs_min: parseInt(document.getElementById("subs_min").value) || 5000,
+            subs_max: parseInt(document.getElementById("subs_max").value) || 500000,
+            period: document.getElementById("time_period").value,
+            // Если поля просмотров пустые, отправляем null, как и ждет Optional[int]
+            views_min: document.getElementById("views_min").value ? parseInt(document.getElementById("views_min").value) : null,
+            views_max: document.getElementById("views_max").value ? parseInt(document.getElementById("views_max").value) : null,
+            format_content: document.getElementById("content_format").value,
             deep_scan: document.getElementById("deep_scan").checked,
-            time_period: document.getElementById("time_period").value,
-            views_min: document.getElementById("views_min").value,
-            views_max: document.getElementById("views_max").value,
-            content_format: document.getElementById("content_format").value,
-            require_contacts: document.getElementById("require_contacts").checked
+            only_with_contacts: document.getElementById("require_contacts").checked
         };
-        tg.sendData(JSON.stringify(data));
+
+        // 2. Делаем кнопку неактивной, чтобы не нажали 10 раз
+        let btn = document.querySelector("button");
+        let originalText = btn.innerText;
+        btn.innerText = "ЗАПУСКАЮ СБОР...";
+        btn.style.background = "#555";
+        btn.style.color = "#fff";
+        btn.disabled = true;
+
+        // 3. Отправляем прямой POST-запрос в твой "Мозг" через туннель
+        fetch("https://flow-core-pro.loca.lt/api/v1/parse", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                // Тот самый критически важный заголовок для обхода заглушки localtunnel
+                "Bypass-Tunnel-Reminder": "true" 
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => {
+            if(response.ok) {
+                // Если FastAPI ответил статусом 200 (Всё ок)
+                tg.showAlert("Сбор данных успешно инициализирован! Результат будет выгружен в БД.");
+                tg.close(); // Автоматически закрываем Mini App
+            } else {
+                // Если ошибка сервера (например, 422 или 500)
+                tg.showAlert("Ошибка при запуске. Проверь терминал сервера (main.py).");
+                btn.innerText = originalText;
+                btn.style.background = "#ffffff";
+                btn.style.color = "#000000";
+                btn.disabled = false;
+            }
+        })
+        .catch(error => {
+            // Если сервер вообще недоступен (упал localtunnel или выключен python)
+            tg.showAlert("Сервер FLOW CORE недоступен! Проверь, запущен ли localtunnel и main.py.");
+            btn.innerText = originalText;
+            btn.style.background = "#ffffff";
+            btn.style.color = "#000000";
+            btn.disabled = false;
+        });
     }
 </script>
-</body>
-</html>
