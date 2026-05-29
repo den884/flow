@@ -140,7 +140,9 @@
         btn.innerText = "ЗАПУСКАЮ...";
         btn.classList.add("loading");
 
+        // ДОБАВЛЕН user_id
         let requestData = {
+            user_id: tg.initDataUnsafe?.user?.id || 0,
             vector: document.getElementById("query").value,
             limit: parseInt(document.getElementById("limit").value) || 250,
             subs_min: parseInt(document.getElementById("subs_min").value) || 5000,
@@ -164,7 +166,7 @@
         .then(response => {
             if(response.ok) {
                 tg.HapticFeedback.notificationOccurred("success");
-                tg.showAlert("Сбор данных запущен. Результат выгружается...");
+                tg.showAlert("Сбор данных запущен. Ожидай таблицу в чате.");
                 setTimeout(() => tg.close(), 1500);
             } else { throw new Error("Server response not OK"); }
         })
