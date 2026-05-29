@@ -2,133 +2,99 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FLOW CRM - Поиск лидов</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FLOW CRM - PRO</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        :root {
+            --bg: #050505;
+            --surface: rgba(22, 22, 22, 0.75);
+            --border: rgba(255, 255, 255, 0.08);
+            --accent: #ffffff;
+            --text-main: #f2f2f2;
+            --text-muted: #808080;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); } 70% { box-shadow: 0 0 0 15px rgba(255,255,255,0); } 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); } }
+
         body {
-            background-color: #000000;
-            color: #ffffff;
+            background-color: var(--bg); color: var(--text-main); margin: 0; padding: 20px;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            padding: 20px;
-            margin: 0;
+            -webkit-font-smoothing: antialiased;
         }
+
         .container {
-            max-width: 100%;
-            background: #111111;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+            padding: 24px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            animation: fadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); box-shadow: 0 10px 40px rgba(0,0,0,0.8);
         }
-        h2 {
-            margin-top: 0;
-            font-size: 18px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #aaaaaa;
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
-        }
-        .input-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            font-size: 12px;
-            color: #888;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
+
+        h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); margin: 0 0 20px 0; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+
+        .input-group { margin-bottom: 18px; }
+        label { display: block; font-size: 11px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+
         input[type="text"], input[type="number"], select {
-            width: 100%;
-            padding: 12px;
-            background: #1a1a1a;
-            color: #ffffff;
-            border: 1px solid #333;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 14px;
+            width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.3); color: var(--text-main);
+            border: 1px solid var(--border); border-radius: 10px; font-size: 15px; box-sizing: border-box;
+            transition: all 0.3s ease; outline: none; appearance: none;
         }
-        input:focus, select:focus {
-            outline: none;
-            border-color: #555;
-        }
-        .flex-row {
-            display: flex;
-            gap: 10px;
-        }
-        .flex-row input {
-            width: 50%;
-        }
-        .toggle-group {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
-            padding: 10px 0;
-            border-top: 1px solid #222;
-        }
-        .toggle-group label {
-            margin-bottom: 0;
-            font-size: 14px;
-            color: #fff;
-            text-transform: none;
-        }
-        .toggle-group input[type="checkbox"] {
-            transform: scale(1.5);
-            accent-color: #ffffff;
-        }
+        input:focus, select:focus { border-color: rgba(255,255,255,0.3); background: rgba(0,0,0,0.6); box-shadow: 0 0 0 4px rgba(255,255,255,0.05); }
+        
+        .flex-row { display: flex; gap: 12px; }
+
+        .toggle-group { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-top: 1px solid var(--border); }
+        .toggle-group div { display: flex; flex-direction: column; }
+        .toggle-group label { margin: 0; font-size: 14px; font-weight: 500; color: var(--text-main); text-transform: none; letter-spacing: 0; }
+        .toggle-group span { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+        /* Кастомный iOS Switch */
+        .switch { position: relative; display: inline-block; width: 46px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s cubic-bezier(0.4, 0.0, 0.2, 1); border-radius: 30px; }
+        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 2px; bottom: 2px; background-color: #fff; transition: .4s cubic-bezier(0.4, 0.0, 0.2, 1); border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--accent); }
+        input:checked + .slider:before { transform: translateX(20px); background-color: #000; }
+
         button {
-            width: 100%;
-            padding: 15px;
-            background: #ffffff;
-            color: #000000;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 20px;
-            cursor: pointer;
-            text-transform: uppercase;
+            width: 100%; padding: 16px; margin-top: 24px; background: var(--accent); color: #000;
+            border: none; border-radius: 12px; font-size: 15px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; cursor: pointer; transition: all 0.3s ease;
         }
-        button:active {
-            background: #cccccc;
-        }
+        button:active { transform: scale(0.97); }
+        button.loading { background: #333; color: #fff; animation: pulseGlow 1.5s infinite; pointer-events: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Поисковые ключевые векторы</h2>
-    
+    <h2>Поисковые векторы</h2>
     <div class="input-group">
-        <input type="text" id="query" placeholder="бизнес подкасты, арбитраж трафика..." value="бизнес подкасты">
+        <input type="text" id="query" placeholder="бизнес подкасты, арбитраж..." value="бизнес подкасты">
     </div>
 
-    <div class="input-group">
-        <label>Лимит уникальных лидов</label>
-        <input type="number" id="limit" value="250">
-    </div>
-
-    <div class="input-group">
-        <label>Сабы (Минимум - Максимум)</label>
-        <div class="flex-row">
-            <input type="number" id="subs_min" placeholder="5000" value="5000">
-            <input type="number" id="subs_max" placeholder="500000" value="500000">
+    <div class="flex-row">
+        <div class="input-group" style="flex: 1;">
+            <label>Лимит лидов</label>
+            <input type="number" id="limit" value="250">
+        </div>
+        <div class="input-group" style="flex: 1.5;">
+            <label>Формат</label>
+            <select id="content_format">
+                <option value="all">Любой формат</option>
+                <option value="long">Длинные видео</option>
+                <option value="shorts">Shorts</option>
+            </select>
         </div>
     </div>
 
     <div class="input-group">
-        <label>Период публикации</label>
-        <select id="time_period">
-            <option value="1_week">За последнюю неделю</option>
-            <option value="1_month">За последний месяц</option>
-            <option value="2_months">За 2 месяца</option>
-            <option value="3_months">За 3 месяца</option>
-            <option value="6_months">За полгода</option>
-            <option value="1_year">За год</option>
-            <option value="all_time" selected>За всё время</option>
-        </select>
+        <label>Сабы (Мин - Макс)</label>
+        <div class="flex-row">
+            <input type="number" id="subs_min" placeholder="5000" value="5000">
+            <input type="number" id="subs_max" placeholder="500000" value="500000">
+        </div>
     </div>
 
     <div class="input-group">
@@ -140,25 +106,28 @@
     </div>
 
     <div class="input-group">
-        <label>Формат контента</label>
-        <select id="content_format">
-            <option value="all">Любой формат</option>
-            <option value="long">Только длинные видео</option>
-            <option value="shorts">Только Shorts</option>
+        <label>Период публикации</label>
+        <select id="time_period">
+            <option value="1_week">За неделю</option>
+            <option value="1_month">За месяц</option>
+            <option value="3_months">За 3 месяца</option>
+            <option value="6_months">За полгода</option>
+            <option value="1_year">За год</option>
+            <option value="all_time" selected>За всё время</option>
         </select>
     </div>
 
     <div class="toggle-group">
-        <label>Режим Deep Scan<br><span style="font-size: 11px; color: #888;">Внутренний парсинг скрытых контактов</span></label>
-        <input type="checkbox" id="deep_scan">
+        <div><label>Режим Deep Scan</label><span>Внутренний поиск контактов</span></div>
+        <label class="switch"><input type="checkbox" id="deep_scan"><span class="slider"></span></label>
     </div>
 
     <div class="toggle-group">
-        <label>Только с контактами<br><span style="font-size: 11px; color: #888;">Telegram / Email</span></label>
-        <input type="checkbox" id="require_contacts" checked>
+        <div><label>Только с контактами</label><span>Telegram / Email</span></div>
+        <label class="switch"><input type="checkbox" id="require_contacts" checked><span class="slider"></span></label>
     </div>
 
-    <button onclick="sendData()">Инициировать сбор данных</button>
+    <button id="submitBtn" onclick="sendData()">Инициировать сбор</button>
 </div>
 
 <script>
@@ -166,6 +135,11 @@
     tg.expand();
 
     function sendData() {
+        let btn = document.getElementById("submitBtn");
+        let originalText = btn.innerText;
+        btn.innerText = "ЗАПУСКАЮ...";
+        btn.classList.add("loading");
+
         let requestData = {
             vector: document.getElementById("query").value,
             limit: parseInt(document.getElementById("limit").value) || 250,
@@ -179,13 +153,6 @@
             only_with_contacts: document.getElementById("require_contacts").checked
         };
 
-        let btn = document.querySelector("button");
-        let originalText = btn.innerText;
-        btn.innerText = "ЗАПУСКАЮ СБОР...";
-        btn.style.background = "#555";
-        btn.style.color = "#fff";
-        btn.disabled = true;
-
         fetch("https://my-flow-test.loca.lt/api/v1/parse", {
             method: "POST",
             headers: {
@@ -196,22 +163,16 @@
         })
         .then(response => {
             if(response.ok) {
-                tg.showAlert("Сбор данных успешно инициализирован! Результат будет выгружен в БД.");
-                tg.close();
-            } else {
-                tg.showAlert("Ошибка при запуске. Проверь терминал сервера (main.py).");
-                btn.innerText = originalText;
-                btn.style.background = "#ffffff";
-                btn.style.color = "#000000";
-                btn.disabled = false;
-            }
+                tg.HapticFeedback.notificationOccurred("success");
+                tg.showAlert("Сбор данных запущен. Результат выгружается...");
+                setTimeout(() => tg.close(), 1500);
+            } else { throw new Error("Server response not OK"); }
         })
         .catch(error => {
-            tg.showAlert("Сервер FLOW CORE недоступен! Проверь, запущен ли localtunnel и main.py.");
+            tg.HapticFeedback.notificationOccurred("error");
+            tg.showAlert("Сервер FLOW недоступен. Проверь localtunnel и main.py.");
             btn.innerText = originalText;
-            btn.style.background = "#ffffff";
-            btn.style.color = "#000000";
-            btn.disabled = false;
+            btn.classList.remove("loading");
         });
     }
 </script>
