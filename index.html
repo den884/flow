@@ -140,7 +140,6 @@
         btn.innerText = "ЗАПУСКАЮ...";
         btn.classList.add("loading");
 
-        // ДОБАВЛЕН user_id
         let requestData = {
             user_id: tg.initDataUnsafe?.user?.id || 0,
             vector: document.getElementById("query").value,
@@ -163,16 +162,21 @@
             },
             body: JSON.stringify(requestData)
         })
-        .then(response => {
+        .then(async response => {
             if(response.ok) {
                 tg.HapticFeedback.notificationOccurred("success");
                 tg.showAlert("Сбор данных запущен. Ожидай таблицу в чате.");
                 setTimeout(() => tg.close(), 1500);
-            } else { throw new Error("Server response not OK"); }
+            } else { 
+                // Вытягиваем реальную причину ошибки из FastAPI
+                let errorText = await response.text();
+                throw new Error(errorText); 
+            }
         })
         .catch(error => {
             tg.HapticFeedback.notificationOccurred("error");
-            tg.showAlert("Сервер FLOW недоступен. Проверь localtunnel и main.py.");
+            // Теперь на экране будет четко написано, какое поле отвалилось
+            tg.showAlert("Ошибка сервера: \n" + error.message);
             btn.innerText = originalText;
             btn.classList.remove("loading");
         });
