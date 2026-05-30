@@ -7,63 +7,40 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg: #050505;
-            --surface: rgba(22, 22, 22, 0.75);
-            --border: rgba(255, 255, 255, 0.08);
-            --accent: #ffffff;
-            --text-main: #f2f2f2;
-            --text-muted: #808080;
+            --bg: #050505; --surface: rgba(22, 22, 22, 0.75);
+            --border: rgba(255, 255, 255, 0.08); --accent: #ffffff;
+            --text-main: #f2f2f2; --text-muted: #808080;
         }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); } 70% { box-shadow: 0 0 0 15px rgba(255,255,255,0); } 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); } }
-
         body {
             background-color: var(--bg); color: var(--text-main); margin: 0; padding: 20px;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            -webkit-font-smoothing: antialiased;
         }
-
         .container {
             background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
-            padding: 24px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            animation: fadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
         }
-
-        h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); margin: 0 0 20px 0; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
-
+        h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin: 0 0 20px 0; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
         .input-group { margin-bottom: 18px; }
-        label { display: block; font-size: 11px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-
+        label { display: block; font-size: 11px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; }
         input[type="text"], input[type="number"], select {
             width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.3); color: var(--text-main);
-            border: 1px solid var(--border); border-radius: 10px; font-size: 15px; box-sizing: border-box;
-            transition: all 0.3s ease; outline: none; appearance: none;
+            border: 1px solid var(--border); border-radius: 10px; font-size: 15px; box-sizing: border-box; outline: none; appearance: none;
         }
-        input:focus, select:focus { border-color: rgba(255,255,255,0.3); background: rgba(0,0,0,0.6); box-shadow: 0 0 0 4px rgba(255,255,255,0.05); }
-        
         .flex-row { display: flex; gap: 12px; }
-
         .toggle-group { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-top: 1px solid var(--border); }
         .toggle-group div { display: flex; flex-direction: column; }
-        .toggle-group label { margin: 0; font-size: 14px; font-weight: 500; color: var(--text-main); text-transform: none; letter-spacing: 0; }
+        .toggle-group label { margin: 0; font-size: 14px; font-weight: 500; color: var(--text-main); text-transform: none; }
         .toggle-group span { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-
-        /* Кастомный iOS Switch */
         .switch { position: relative; display: inline-block; width: 46px; height: 26px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s cubic-bezier(0.4, 0.0, 0.2, 1); border-radius: 30px; }
-        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 2px; bottom: 2px; background-color: #fff; transition: .4s cubic-bezier(0.4, 0.0, 0.2, 1); border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; border-radius: 30px; transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 2px; bottom: 2px; background-color: #fff; border-radius: 50%; transition: .4s; }
         input:checked + .slider { background-color: var(--accent); }
         input:checked + .slider:before { transform: translateX(20px); background-color: #000; }
-
         button {
             width: 100%; padding: 16px; margin-top: 24px; background: var(--accent); color: #000;
-            border: none; border-radius: 12px; font-size: 15px; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 1px; cursor: pointer; transition: all 0.3s ease;
+            border: none; border-radius: 12px; font-size: 15px; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease;
         }
-        button:active { transform: scale(0.97); }
-        button.loading { background: #333; color: #fff; animation: pulseGlow 1.5s infinite; pointer-events: none; }
     </style>
 </head>
 <body>
@@ -92,28 +69,24 @@
     <div class="input-group">
         <label>Сабы (Мин - Макс)</label>
         <div class="flex-row">
-            <input type="number" id="subs_min" placeholder="5000" value="5000">
-            <input type="number" id="subs_max" placeholder="500000" value="500000">
+            <input type="number" id="subs_min" value="5000">
+            <input type="number" id="subs_max" value="500000">
         </div>
     </div>
 
     <div class="input-group">
         <label>Просмотры (Мин - Макс)</label>
         <div class="flex-row">
-            <input type="number" id="views_min" placeholder="От 1000">
-            <input type="number" id="views_max" placeholder="До 60000">
+            <input type="number" id="views_min" placeholder="0">
+            <input type="number" id="views_max" placeholder="0">
         </div>
     </div>
 
     <div class="input-group">
         <label>Период публикации</label>
         <select id="time_period">
-            <option value="1_week">За неделю</option>
-            <option value="1_month">За месяц</option>
-            <option value="3_months">За 3 месяца</option>
-            <option value="6_months">За полгода</option>
-            <option value="1_year">За год</option>
             <option value="all_time" selected>За всё время</option>
+            <option value="1_month">За месяц</option>
         </select>
     </div>
 
@@ -127,7 +100,7 @@
         <label class="switch"><input type="checkbox" id="require_contacts" checked><span class="slider"></span></label>
     </div>
 
-    <button id="submitBtn" onclick="sendData()">Инициировать сбор</button>
+    <button id="submitBtn" onclick="sendData()">ИНИЦИИРОВАТЬ СБОР</button>
 </div>
 
 <script>
@@ -136,49 +109,52 @@
 
     function sendData() {
         let btn = document.getElementById("submitBtn");
-        let originalText = btn.innerText;
         btn.innerText = "ЗАПУСКАЮ...";
-        btn.classList.add("loading");
+        
+        let vMin = document.getElementById("views_min").value;
+        let vMax = document.getElementById("views_max").value;
 
+        // Полная защита от отправки пустых значений
         let requestData = {
             user_id: tg.initDataUnsafe?.user?.id || 0,
-            vector: document.getElementById("query").value,
+            vector: document.getElementById("query").value || "бизнес подкасты",
             limit: parseInt(document.getElementById("limit").value) || 250,
             subs_min: parseInt(document.getElementById("subs_min").value) || 5000,
             subs_max: parseInt(document.getElementById("subs_max").value) || 500000,
             period: document.getElementById("time_period").value,
-            views_min: document.getElementById("views_min").value ? parseInt(document.getElementById("views_min").value) : null,
-            views_max: document.getElementById("views_max").value ? parseInt(document.getElementById("views_max").value) : null,
+            views_min: vMin ? parseInt(vMin) : 0, 
+            views_max: vMax ? parseInt(vMax) : 0,
             format_content: document.getElementById("content_format").value,
             deep_scan: document.getElementById("deep_scan").checked,
             only_with_contacts: document.getElementById("require_contacts").checked
         };
 
-        fetch("https://my-flow-test.loca.lt/api/v1/parse", {
+        // ТУТ ВСТАВЬ АКТУАЛЬНУЮ ССЫЛКУ ИЗ ТЕРМИНАЛА LOCALTUNNEL!
+        const API_URL = "https://my-flow-test.loca.lt/api/v1/parse";
+
+        fetch(API_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Bypass-Tunnel-Reminder": "true"
+                "Bypass-Tunnel-Reminder": "true",
+                "ngrok-skip-browser-warning": "true"
             },
             body: JSON.stringify(requestData)
         })
         .then(async response => {
             if(response.ok) {
                 tg.HapticFeedback.notificationOccurred("success");
-                tg.showAlert("Сбор данных запущен. Ожидай таблицу в чате.");
+                tg.showAlert("Сбор запущен. Таблица придет в чат.");
                 setTimeout(() => tg.close(), 1500);
             } else { 
-                // Вытягиваем реальную причину ошибки из FastAPI
-                let errorText = await response.text();
-                throw new Error(errorText); 
+                let errText = await response.text();
+                throw new Error(`Ошибка сервера ${response.status}: ${errText}`); 
             }
         })
         .catch(error => {
             tg.HapticFeedback.notificationOccurred("error");
-            // Теперь на экране будет четко написано, какое поле отвалилось
-            tg.showAlert("Ошибка сервера: \n" + error.message);
-            btn.innerText = originalText;
-            btn.classList.remove("loading");
+            tg.showAlert("Связь с сервером потеряна.\n\nПроверь:\n1. Работает ли python main.py?\n2. Совпадает ли ссылка localtunnel в коде Vercel?\n\nТехническая инфа: " + error.message);
+            btn.innerText = "ИНИЦИИРОВАТЬ СБОР";
         });
     }
 </script>
